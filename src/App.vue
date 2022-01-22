@@ -5,12 +5,21 @@ import Main from './components/Main.vue';</script>
   <Main msg="Hello"/>
 </template>
 
-<style>
+<style scoped>
+html, body {
+  margin: 0;
+  padding: 0;
+}
 body {
-  margin: 0 auto;
+  position: fixed;
+  top: 0;
+  left: 0;
+}
+
+#app {
+  margin: 0;
+  position: absolute;
   font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
 }

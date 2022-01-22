@@ -13,7 +13,6 @@ import {
   WebGLRenderer
 } from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import { logError } from 'vite/dist/node/server/middlewares/error';
 
 const renderer = new WebGLRenderer();
 const scene = new Scene();
@@ -28,7 +27,7 @@ const lightHelper = new PointLightHelper(pointLight);
 pointLight.position.set(-5, -5, 5);
 camera.position.z = 5;
 renderer.setSize(window.innerWidth, window.innerHeight);
-document.body.appendChild(renderer.domElement);
+document.getElementById('app')?.appendChild(renderer.domElement);
 
 scene.add(lightHelper);
 scene.add(pointLight);
@@ -44,12 +43,15 @@ function addStar() {
   star.position.set(x, y, z);
   scene.add(star);
 }
+
 Array(300).fill(undefined).forEach(addStar);
 
 function moveCamera() {
-  cube.rotateY(.2)
+  cube.position.x += .5;
+  console.log('asdf');
 }
-document.body.onscroll = moveCamera;
+
+window.addEventListener('resize', moveCamera);
 
 function animate() {
   requestAnimationFrame(animate);
@@ -59,6 +61,7 @@ function animate() {
   controls.update();
   renderer.render(scene, camera);
 }
+
 animate();
 
 </script>

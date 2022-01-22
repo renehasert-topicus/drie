@@ -1,7 +1,9 @@
 <script setup>
 import * as THREE from 'three'
+import {PointLight} from 'three'
 import Stats from "three/examples/jsm/libs/stats.module";
 
+const appElement = document.getElementById('app');
 const scene = new THREE.Scene()
 
 const gridHelper = new THREE.GridHelper(10, 10, 0xaec6cf, 0xaec6cf)
@@ -11,17 +13,19 @@ const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerH
 
 const renderer = new THREE.WebGLRenderer()
 renderer.setSize(window.innerWidth, window.innerHeight)
-document.getElementById('app').appendChild(renderer.domElement)
+appElement.appendChild(renderer.domElement)
 
 const geometry = new THREE.BoxGeometry()
-const material = new THREE.MeshBasicMaterial({
-  color: 0x00ff00,
-  wireframe: true
-})
+const material = new THREE.MeshStandardMaterial({color: 'red'})
 
 const cube = new THREE.Mesh(geometry, material)
 cube.position.set(0, 0.5, -10)
 scene.add(cube)
+
+const pointLight = new PointLight(0xfffff);
+
+pointLight.position.set(10, 10, 5);
+scene.add(pointLight)
 
 window.addEventListener('resize', onWindowResize, false)
 
@@ -32,19 +36,10 @@ function onWindowResize() {
   render()
 }
 
-/* Liner Interpolation
- * lerp(min, max, ratio)
- * eg,
- * lerp(20, 60, .5)) = 40
- * lerp(-20, 60, .5)) = 20
- * lerp(20, 60, .75)) = 50
- * lerp(-20, -10, .1)) = -.19
- */
 function lerp(x, y, a) {
   return (1 - a) * x + a * y
 }
 
-// Used to fit the lerps to start and end at specific scrolling percentages
 function scalePercent(start, end) {
   return (scrollPercent - start) / (end - start)
 }
@@ -122,18 +117,18 @@ function playScrollAnimations() {
 
 let scrollPercent = 0
 
-document.getElementById('app').onscroll = () => {
+appElement.onscroll = () => {
   scrollPercent =
-      ((document.getElementById('app').scrollTop || document.getElementById('app').scrollTop) /
-          ((document.getElementById('app').scrollHeight || document.getElementById('app').scrollHeight) -
-              document.getElementById('app').clientHeight)) *
+      ((appElement.scrollTop || appElement.scrollTop) /
+          ((appElement.scrollHeight || appElement.scrollHeight) -
+              appElement.clientHeight)) *
       100
   document.getElementById('scrollProgress').innerText =
       'Scroll Progress : ' + scrollPercent.toFixed(2)
 }
 
 const stats = Stats()
-document.getElementById('app').appendChild(stats.dom)
+appElement.appendChild(stats.dom)
 
 function animate() {
   requestAnimationFrame(animate)
@@ -150,6 +145,10 @@ function render() {
 
 window.scrollTo({top: 0, behavior: 'smooth'})
 animate()
+
+function scrollToTop() {
+  appElement.scrollTo({top: 0, behavior: 'smooth'});
+}
 
 </script>
 <template>
@@ -177,7 +176,8 @@ animate()
     <section>
       <h2>You are at the bottom</h2>
       <p>The cube will now be auto rotating</p>
-      <p>Now you can scroll back to the top to reverse the animation</p>
+      <a href="javascript:void(0)" @click="scrollToTop()">Now you can scroll back to the top to reverse the
+        animation</a>
     </section>
   </main>
 </template>
@@ -197,6 +197,7 @@ canvas {
   position: fixed;
   top: 0;
   left: 0;
+  z-index: -1;
 }
 
 main {
@@ -206,7 +207,6 @@ main {
   position: absolute;
   justify-content: center;
   text-align: center;
-  pointer-events: none;
   font-size: 5vh;
 }
 
